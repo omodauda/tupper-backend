@@ -2,23 +2,35 @@ import { User } from '@prisma/client';
 import HttpException from '../utils/handlers/error.handler';
 import prisma from '../lib/prisma';
 import bcrypt from 'bcrypt';
+import generateOtp from 'utils/otp';
 
 export default class UserService {
   public users = prisma.user;
 
-  public async createUser(name: string, email: string, password: string, zipCode: string): Promise<User> {
+  public async createUser(name: string, email: string, password: string, zipCode: string) {
     const existingEmail = await this.users.findUnique({ where: { email } });
 
     if (existingEmail) throw new HttpException(409, `user with email ${email} already exists`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    return await this.users.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        zipCode
-      }
+    const { otp, expiresAt } = generateOtp();
+
+    return await prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+          zipCode
+        }
+      })
+      await tx.otp.create({
+        data: {
+          userId: newUser.id,
+          otp,
+          expiresAt
+        }
+      })
     })
   }
 
