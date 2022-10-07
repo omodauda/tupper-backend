@@ -15,11 +15,21 @@ model User {
   name       String
   email      String   @unique
   password   String
-  zipCode    Int
+  zipCode    String
   isAdmin    Boolean  @default(false)
   isVerified Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  otp        Otp?
 
   @@map("users")
+}
+
+model Otp {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  otp    String
+
+  @@map("otps")
 }
