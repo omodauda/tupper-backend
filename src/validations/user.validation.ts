@@ -31,6 +31,14 @@ const signUpValidation = Joi.object({
       'string.pattern.base': 'full name is required',
       'any.required': 'name is required'
     }),
+  zipCode: Joi.string()
+    .min(5)
+    .required()
+    .messages({
+      'string.empty': 'zip code cannot be an empty field',
+      'string.min': 'zip code should be minimum of 5 characters length',
+      'any.required': 'zip code is required'
+    })
 });
 
 const loginValidation = Joi.object({

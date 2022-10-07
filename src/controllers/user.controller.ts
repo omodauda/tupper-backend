@@ -8,8 +8,8 @@ export default class UserController {
 
   public signUp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
-      const { name, email, password } = req.body;
-      await this.UserService.createUser(name, email, password);
+      const { name, email, password, zipCode } = req.body;
+      await this.UserService.createUser(name, email, password, zipCode);
       return res
         .status(201)
         .json({
