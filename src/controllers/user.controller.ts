@@ -21,6 +21,36 @@ export default class UserController {
     }
   }
 
+  public verifyUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+    try {
+      const { email, otp } = req.body;
+      await this.UserService.verifyUser(email, otp);
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'user verified successfully'
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public resendVerifyOtp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+    try {
+      const { email } = req.body;
+      await this.UserService.resendVerifyOtp(email)
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'verification otp sent successfully'
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
+
   public login = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { email, password } = req.body;
