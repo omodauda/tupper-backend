@@ -6,6 +6,7 @@ import hpp from 'hpp';
 
 import errorMiddleware from './middlewares/error.middleware';
 import Routes from './interfaces/route.interface';
+import schedules from './schedules';
 
 class App {
   public app: Application;
@@ -20,6 +21,7 @@ class App {
     this.initializeMiddleware();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
+    this.initializeSchedules()
   }
 
   private initializeMiddleware(): void {
@@ -39,6 +41,10 @@ class App {
 
   private initializeErrorHandling(): void {
     this.app.use(errorMiddleware);
+  }
+
+  private initializeSchedules(): void {
+    schedules();
   }
 
   public listen(): void {
