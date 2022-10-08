@@ -2,7 +2,7 @@ import { Router } from "express";
 import UserController from "../controllers/user.controller";
 import Route from "../interfaces/route.interface";
 import validationMiddleware from "../middlewares/validation.middleware";
-import { signUpValidation, loginValidation } from "../validations/user.validation";
+import { signUpValidation, loginValidation, verifyUserValidation, resendVerifyOtp } from "../validations/user.validation";
 
 export default class UserRoute implements Route {
   public path = '/user';
@@ -21,5 +21,13 @@ export default class UserRoute implements Route {
     this.router
       .route(`${this.path}/login`)
       .post(validationMiddleware(loginValidation), this.UserController.login);
+
+    this.router
+      .route(`${this.path}/verify`)
+      .post(validationMiddleware(verifyUserValidation), this.UserController.verifyUser);
+
+    this.router
+      .route(`${this.path}/resend-otp`)
+      .post(validationMiddleware(resendVerifyOtp), this.UserController.resendVerifyOtp)
   }
 }
