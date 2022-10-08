@@ -2,15 +2,24 @@ import { User } from '@prisma/client';
 import HttpException from '../utils/handlers/error.handler';
 import prisma from '../lib/prisma';
 import bcrypt from 'bcrypt';
-import generateOtp from 'utils/otp';
+import generateOtp from '../utils/otp';
+import moment from 'moment';
 
 export default class UserService {
   public users = prisma.user;
+  public otps = prisma.otp;
+
+  private async isRegisteredUser(email: string) {
+    return await this.users.findUnique({
+      where: {
+        email
+      }
+    });
+  }
 
   public async createUser(name: string, email: string, password: string, zipCode: string) {
-    const existingEmail = await this.users.findUnique({ where: { email } });
-
-    if (existingEmail) throw new HttpException(409, `user with email ${email} already exists`);
+    const existingEmail = await this.isRegisteredUser(email);
+    if (existingEmail) throw new HttpException(409, `user with email ${email} already exist`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const { otp, expiresAt } = generateOtp();
@@ -34,8 +43,40 @@ export default class UserService {
     })
   }
 
+  public async verifyUser(email: string, otp: string) {
+    const registeredUser = await this.isRegisteredUser(email)
+    if (!registeredUser) throw new HttpException(400, `user with email ${email} is not registered`);
+
+    if (registeredUser.isVerified) {
+      throw new HttpException(400, `user already verified`);
+    }
+
+    const userOtpData = await this.otps.findUnique({ where: { userId: registeredUser.id } });
+    const now = moment();
+
+    if (userOtpData?.otp !== otp) {
+      throw new HttpException(400, 'invalid verification code')
+    } else if (now.isAfter(userOtpData.expiresAt)) {
+      throw new HttpException(400, 'verification code expired')
+    }
+    await this.users.update({ where: { id: registeredUser.id }, data: { isVerified: true } })
+  }
+
+  public async resendVerifyOtp(email: string) {
+    const registeredUser = await this.isRegisteredUser(email);
+    if (!registeredUser) throw new HttpException(400, `user with email ${email} is not registered`);
+    if (registeredUser.isVerified) {
+      throw new HttpException(400, `user already verified`);
+    }
+    const { otp, expiresAt } = generateOtp();
+
+    // create otp record
+    await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
+    // send otp
+  }
+
   public async login(email: string, password: string): Promise<User> {
-    const existingUser = await this.users.findUnique({ where: { email } });
+    const existingUser = await this.isRegisteredUser(email)
     if (!existingUser) throw new HttpException(409, 'invalid email/password');
 
     const isValidPassword: boolean = await bcrypt.compare(password, existingUser.password);
