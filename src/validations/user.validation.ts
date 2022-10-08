@@ -22,12 +22,10 @@ const signUpValidation = Joi.object({
       'any.required': 'password is required',
     }),
   name: Joi.string()
-    .min(5)
     .required()
     .pattern(/(\w.+\s).+/)
     .messages({
       'string.empty': 'name cannot be an empty field',
-      'string.min': 'name should be minimum of 5 characters length',
       'string.pattern.base': 'full name is required',
       'any.required': 'name is required'
     }),
@@ -64,4 +62,40 @@ const loginValidation = Joi.object({
     }),
 })
 
-export { signUpValidation, loginValidation }
+const verifyUserValidation = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2 })
+    .min(5)
+    .max(100)
+    .required()
+    .messages({
+      'string.empty': 'email cannot be an empty field',
+      'string.email': 'please enter a valid email address',
+      'any.required': 'email is required'
+    }),
+  otp: Joi.string()
+    .min(4)
+    .max(4)
+    .required()
+    .messages({
+      'string.empty': 'otp cannot be an empty field',
+      'string.min': 'otp should be minimum of 5 characters length',
+      'string.max': 'otp should not be more than 4 characters length',
+      'any.required': 'otp is required',
+    })
+})
+
+const resendVerifyOtp = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2 })
+    .min(5)
+    .max(100)
+    .required()
+    .messages({
+      'string.empty': 'email cannot be an empty field',
+      'string.email': 'please enter a valid email address',
+      'any.required': 'email is required'
+    }),
+})
+
+export { signUpValidation, loginValidation, verifyUserValidation, resendVerifyOtp }
