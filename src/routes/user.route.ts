@@ -28,6 +28,10 @@ export default class UserRoute implements Route {
 
     this.router
       .route(`${this.path}/resend-otp`)
-      .post(validationMiddleware(resendVerifyOtp), this.UserController.resendVerifyOtp)
+      .post(validationMiddleware(resendVerifyOtp), this.UserController.resendVerifyOtp);
+
+    this.router
+      .route(`${this.path}/user/forget-passsword`)
+      .post(validationMiddleware(resendVerifyOtp), this.UserController.forgetPassword)
   }
 }
