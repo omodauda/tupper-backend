@@ -68,4 +68,19 @@ export default class UserController {
       next(error)
     }
   }
+
+  public forgetPassword = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+    try {
+      const { email } = req.body;
+      await this.UserService.forgetPassword(email);
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'please check your email for a reset otp',
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
