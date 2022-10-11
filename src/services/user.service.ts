@@ -84,4 +84,14 @@ export default class UserService {
 
     return existingUser;
   }
+
+  public async forgetPassword(email: string) {
+    const registeredUser = await this.isRegisteredUser(email);
+    if (!registeredUser) throw new HttpException(409, `Email ${email} is not registered`)
+
+    const { otp, expiresAt } = generateOtp();
+    // create otp record
+    await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
+    // send otp
+  }
 }
