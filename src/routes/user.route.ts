@@ -2,7 +2,7 @@ import { Router } from "express";
 import UserController from "../controllers/user.controller";
 import Route from "../interfaces/route.interface";
 import validationMiddleware from "../middlewares/validation.middleware";
-import { signUpValidation, loginValidation, verifyUserValidation, resendVerifyOtp } from "../validations/user.validation";
+import { signUpValidation, loginValidation, verifyUserValidation, resendVerifyOtp, resetPasswordValidation } from "../validations/user.validation";
 
 export default class UserRoute implements Route {
   public path = '/user';
@@ -31,7 +31,11 @@ export default class UserRoute implements Route {
       .post(validationMiddleware(resendVerifyOtp), this.UserController.resendVerifyOtp);
 
     this.router
-      .route(`${this.path}/user/forget-passsword`)
-      .post(validationMiddleware(resendVerifyOtp), this.UserController.forgetPassword)
+      .route(`${this.path}/forget-password`)
+      .post(validationMiddleware(resendVerifyOtp), this.UserController.forgetPassword);
+
+    this.router
+      .route(`${this.path}/reset-password`)
+      .post(validationMiddleware(resetPasswordValidation), this.UserController.resetPassword)
   }
 }
