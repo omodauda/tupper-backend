@@ -83,4 +83,19 @@ export default class UserController {
       next(error)
     }
   }
+
+  public resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+    try {
+      const { email, otp, password } = req.body;
+      await this.UserService.resetPassword(email, otp, password);
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'password reset successful',
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
