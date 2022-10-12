@@ -85,7 +85,7 @@ export default class UserService {
     return existingUser;
   }
 
-  public async forgetPassword(email: string) {
+  public async forgetPassword(email: string): Promise<void> {
     const registeredUser = await this.isRegisteredUser(email);
     if (!registeredUser) throw new HttpException(409, `Email ${email} is not registered`)
 
@@ -93,5 +93,25 @@ export default class UserService {
     // create otp record
     await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
     // send otp
+  }
+
+  public async resetPassword(email: string, otp: string, password: string): Promise<void> {
+    const registeredUser = await this.isRegisteredUser(email);
+    if (!registeredUser) throw new HttpException(409, `Email ${email} is not registered`)
+
+    const userOtpData = await this.otps.findUnique({ where: { userId: registeredUser.id } });
+    if (!userOtpData) {
+      throw new HttpException(400, 'otp code expired')
+    }
+    const now = moment();
+
+    if (userOtpData?.otp !== otp) {
+      throw new HttpException(400, 'invalid otp code')
+    } else if (now.isAfter(userOtpData.expiresAt)) {
+      throw new HttpException(400, 'otp code expired')
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await this.users.update({ where: { id: registeredUser.id }, data: { password: hashedPassword } })
   }
 }
