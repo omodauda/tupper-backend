@@ -4,6 +4,7 @@ import prisma from '../lib/prisma';
 import bcrypt from 'bcrypt';
 import generateOtp from '../utils/otp';
 import moment from 'moment';
+import { sendVerificationEmail } from '../utils/email';
 
 export default class UserService {
   public users = prisma.user;
@@ -23,6 +24,8 @@ export default class UserService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const { otp, expiresAt } = generateOtp();
+
+    sendVerificationEmail(name, email, otp);
 
     return await prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
@@ -73,6 +76,7 @@ export default class UserService {
     // create otp record
     await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
     // send otp
+    sendVerificationEmail(registeredUser.name, email, otp);
   }
 
   public async login(email: string, password: string): Promise<User> {
@@ -93,6 +97,7 @@ export default class UserService {
     // create otp record
     await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
     // send otp
+    sendVerificationEmail(registeredUser.name, email, otp);
   }
 
   public async resetPassword(email: string, otp: string, password: string): Promise<void> {
