@@ -80,6 +80,36 @@ class UserController {
                 next(error);
             }
         });
+        this.forgetPassword = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email } = req.body;
+                yield this.UserService.forgetPassword(email);
+                return res
+                    .status(200)
+                    .json({
+                    status: 'success',
+                    message: 'please check your email for a reset otp',
+                });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.resetPassword = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email, otp, password } = req.body;
+                yield this.UserService.resetPassword(email, otp, password);
+                return res
+                    .status(200)
+                    .json({
+                    status: 'success',
+                    message: 'password reset successful',
+                });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
     }
 }
 exports.default = UserController;

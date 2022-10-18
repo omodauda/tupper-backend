@@ -17,6 +17,7 @@ const prisma_1 = __importDefault(require("../lib/prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const otp_1 = __importDefault(require("../utils/otp"));
 const moment_1 = __importDefault(require("moment"));
+const email_1 = require("../utils/email");
 class UserService {
     constructor() {
         this.users = prisma_1.default.user;
@@ -38,6 +39,7 @@ class UserService {
                 throw new error_handler_1.default(409, `user with email ${email} already exist`);
             const hashedPassword = yield bcrypt_1.default.hash(password, 10);
             const { otp, expiresAt } = (0, otp_1.default)();
+            (0, email_1.sendVerificationEmail)(name, email, otp);
             return yield prisma_1.default.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
                 const newUser = yield tx.user.create({
                     data: {
@@ -88,6 +90,7 @@ class UserService {
             // create otp record
             yield this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
             // send otp
+            (0, email_1.sendVerificationEmail)(registeredUser.name, email, otp);
         });
     }
     login(email, password) {
@@ -99,6 +102,38 @@ class UserService {
             if (!isValidPassword)
                 throw new error_handler_1.default(401, 'invalid email/password');
             return existingUser;
+        });
+    }
+    forgetPassword(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const registeredUser = yield this.isRegisteredUser(email);
+            if (!registeredUser)
+                throw new error_handler_1.default(409, `Email ${email} is not registered`);
+            const { otp, expiresAt } = (0, otp_1.default)();
+            // create otp record
+            yield this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
+            // send otp
+            (0, email_1.sendVerificationEmail)(registeredUser.name, email, otp);
+        });
+    }
+    resetPassword(email, otp, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const registeredUser = yield this.isRegisteredUser(email);
+            if (!registeredUser)
+                throw new error_handler_1.default(409, `Email ${email} is not registered`);
+            const userOtpData = yield this.otps.findUnique({ where: { userId: registeredUser.id } });
+            if (!userOtpData) {
+                throw new error_handler_1.default(400, 'otp code expired');
+            }
+            const now = (0, moment_1.default)();
+            if ((userOtpData === null || userOtpData === void 0 ? void 0 : userOtpData.otp) !== otp) {
+                throw new error_handler_1.default(400, 'invalid otp code');
+            }
+            else if (now.isAfter(userOtpData.expiresAt)) {
+                throw new error_handler_1.default(400, 'otp code expired');
+            }
+            const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+            yield this.users.update({ where: { id: registeredUser.id }, data: { password: hashedPassword } });
         });
     }
 }
