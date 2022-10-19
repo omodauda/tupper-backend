@@ -39,7 +39,6 @@ class UserService {
                 throw new error_handler_1.default(409, `user with email ${email} already exist`);
             const hashedPassword = yield bcrypt_1.default.hash(password, 10);
             const { otp, expiresAt } = (0, otp_1.default)();
-            (0, email_1.sendVerificationEmail)(name, email, otp);
             return yield prisma_1.default.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
                 const newUser = yield tx.user.create({
                     data: {
@@ -59,40 +58,21 @@ class UserService {
             }));
         });
     }
-    verifyUser(email, otp) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const registeredUser = yield this.isRegisteredUser(email);
-            if (!registeredUser)
-                throw new error_handler_1.default(400, `user with email ${email} is not registered`);
-            if (registeredUser.isVerified) {
-                throw new error_handler_1.default(400, `user already verified`);
-            }
-            const userOtpData = yield this.otps.findUnique({ where: { userId: registeredUser.id } });
-            const now = (0, moment_1.default)();
-            if ((userOtpData === null || userOtpData === void 0 ? void 0 : userOtpData.otp) !== otp) {
-                throw new error_handler_1.default(400, 'invalid verification code');
-            }
-            else if (now.isAfter(userOtpData.expiresAt)) {
-                throw new error_handler_1.default(400, 'verification code expired');
-            }
-            yield this.users.update({ where: { id: registeredUser.id }, data: { isVerified: true } });
-        });
-    }
-    resendVerifyOtp(email) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const registeredUser = yield this.isRegisteredUser(email);
-            if (!registeredUser)
-                throw new error_handler_1.default(400, `user with email ${email} is not registered`);
-            if (registeredUser.isVerified) {
-                throw new error_handler_1.default(400, `user already verified`);
-            }
-            const { otp, expiresAt } = (0, otp_1.default)();
-            // create otp record
-            yield this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
-            // send otp
-            (0, email_1.sendVerificationEmail)(registeredUser.name, email, otp);
-        });
-    }
+    // public async verifyUser(email: string, otp: string) {
+    //   const registeredUser = await this.isRegisteredUser(email)
+    //   if (!registeredUser) throw new HttpException(400, `user with email ${email} is not registered`);
+    //   if (registeredUser.isVerified) {
+    //     throw new HttpException(400, `user already verified`);
+    //   }
+    //   const userOtpData = await this.otps.findUnique({ where: { userId: registeredUser.id } });
+    //   const now = moment();
+    //   if (userOtpData?.otp !== otp) {
+    //     throw new HttpException(400, 'invalid verification code')
+    //   } else if (now.isAfter(userOtpData.expiresAt)) {
+    //     throw new HttpException(400, 'verification code expired')
+    //   }
+    //   await this.users.update({ where: { id: registeredUser.id }, data: { isVerified: true } })
+    // }
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const existingUser = yield this.isRegisteredUser(email);
@@ -109,6 +89,21 @@ class UserService {
             const registeredUser = yield this.isRegisteredUser(email);
             if (!registeredUser)
                 throw new error_handler_1.default(409, `Email ${email} is not registered`);
+            const { otp, expiresAt } = (0, otp_1.default)();
+            // create otp record
+            yield this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
+            // send otp
+            (0, email_1.sendVerificationEmail)(registeredUser.name, email, otp);
+        });
+    }
+    resendResetOtp(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const registeredUser = yield this.isRegisteredUser(email);
+            if (!registeredUser)
+                throw new error_handler_1.default(400, `user with email ${email} is not registered`);
+            // if (registeredUser.isVerified) {
+            //   throw new HttpException(400, `user already verified`);
+            // }
             const { otp, expiresAt } = (0, otp_1.default)();
             // create otp record
             yield this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });

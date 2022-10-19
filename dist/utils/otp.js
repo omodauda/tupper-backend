@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const otp_generator_1 = __importDefault(require("otp-generator"));
 function generateOtp() {
-    const otp = otp_generator_1.default.generate(5, {
+    const otp = otp_generator_1.default.generate(4, {
         digits: true,
         upperCaseAlphabets: false,
         lowerCaseAlphabets: false,

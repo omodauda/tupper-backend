@@ -32,36 +32,20 @@ class UserController {
                 next(error);
             }
         });
-        this.verifyUser = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { email, otp } = req.body;
-                yield this.UserService.verifyUser(email, otp);
-                return res
-                    .status(200)
-                    .json({
-                    status: 'success',
-                    message: 'user verified successfully'
-                });
-            }
-            catch (error) {
-                next(error);
-            }
-        });
-        this.resendVerifyOtp = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { email } = req.body;
-                yield this.UserService.resendVerifyOtp(email);
-                return res
-                    .status(200)
-                    .json({
-                    status: 'success',
-                    message: 'verification otp sent successfully'
-                });
-            }
-            catch (error) {
-                next(error);
-            }
-        });
+        // public verifyUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+        //   try {
+        //     const { email, otp } = req.body;
+        //     await this.UserService.verifyUser(email, otp);
+        //     return res
+        //       .status(200)
+        //       .json({
+        //         status: 'success',
+        //         message: 'user verified successfully'
+        //       })
+        //   } catch (error) {
+        //     next(error)
+        //   }
+        // }
         this.login = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, password } = req.body;
@@ -89,6 +73,21 @@ class UserController {
                     .json({
                     status: 'success',
                     message: 'please check your email for a reset otp',
+                });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.resendResetOtp = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email } = req.body;
+                yield this.UserService.resendResetOtp(email);
+                return res
+                    .status(200)
+                    .json({
+                    status: 'success',
+                    message: 'verification otp sent successfully'
                 });
             }
             catch (error) {

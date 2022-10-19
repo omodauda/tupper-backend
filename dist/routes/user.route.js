@@ -21,15 +21,15 @@ class UserRoute {
         this.router
             .route(`${this.path}/login`)
             .post((0, validation_middleware_1.default)(user_validation_1.loginValidation), this.UserController.login);
-        this.router
-            .route(`${this.path}/verify`)
-            .post((0, validation_middleware_1.default)(user_validation_1.verifyUserValidation), this.UserController.verifyUser);
-        this.router
-            .route(`${this.path}/resend-otp`)
-            .post((0, validation_middleware_1.default)(user_validation_1.resendVerifyOtp), this.UserController.resendVerifyOtp);
+        // this.router
+        //   .route(`${this.path}/verify`)
+        //   .post(validationMiddleware(verifyUserValidation), this.UserController.verifyUser);
         this.router
             .route(`${this.path}/forget-password`)
             .post((0, validation_middleware_1.default)(user_validation_1.resendVerifyOtp), this.UserController.forgetPassword);
+        this.router
+            .route(`${this.path}/resend-otp`)
+            .post((0, validation_middleware_1.default)(user_validation_1.resendVerifyOtp), this.UserController.resendResetOtp);
         this.router
             .route(`${this.path}/reset-password`)
             .post((0, validation_middleware_1.default)(user_validation_1.resetPasswordValidation), this.UserController.resetPassword);
