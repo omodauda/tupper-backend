@@ -21,35 +21,20 @@ export default class UserController {
     }
   }
 
-  public verifyUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-    try {
-      const { email, otp } = req.body;
-      await this.UserService.verifyUser(email, otp);
-      return res
-        .status(200)
-        .json({
-          status: 'success',
-          message: 'user verified successfully'
-        })
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  public resendVerifyOtp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-    try {
-      const { email } = req.body;
-      await this.UserService.resendVerifyOtp(email)
-      return res
-        .status(200)
-        .json({
-          status: 'success',
-          message: 'verification otp sent successfully'
-        })
-    } catch (error) {
-      next(error)
-    }
-  }
+  // public verifyUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+  //   try {
+  //     const { email, otp } = req.body;
+  //     await this.UserService.verifyUser(email, otp);
+  //     return res
+  //       .status(200)
+  //       .json({
+  //         status: 'success',
+  //         message: 'user verified successfully'
+  //       })
+  //   } catch (error) {
+  //     next(error)
+  //   }
+  // }
 
   public login = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
@@ -78,6 +63,21 @@ export default class UserController {
         .json({
           status: 'success',
           message: 'please check your email for a reset otp',
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public resendResetOtp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+    try {
+      const { email } = req.body;
+      await this.UserService.resendResetOtp(email)
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'verification otp sent successfully'
         })
     } catch (error) {
       next(error)

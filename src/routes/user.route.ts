@@ -22,17 +22,18 @@ export default class UserRoute implements Route {
       .route(`${this.path}/login`)
       .post(validationMiddleware(loginValidation), this.UserController.login);
 
-    this.router
-      .route(`${this.path}/verify`)
-      .post(validationMiddleware(verifyUserValidation), this.UserController.verifyUser);
+    // this.router
+    //   .route(`${this.path}/verify`)
+    //   .post(validationMiddleware(verifyUserValidation), this.UserController.verifyUser);
 
-    this.router
-      .route(`${this.path}/resend-otp`)
-      .post(validationMiddleware(resendVerifyOtp), this.UserController.resendVerifyOtp);
 
     this.router
       .route(`${this.path}/forget-password`)
       .post(validationMiddleware(resendVerifyOtp), this.UserController.forgetPassword);
+
+    this.router
+      .route(`${this.path}/resend-otp`)
+      .post(validationMiddleware(resendVerifyOtp), this.UserController.resendResetOtp);
 
     this.router
       .route(`${this.path}/reset-password`)

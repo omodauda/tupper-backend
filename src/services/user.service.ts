@@ -25,8 +25,6 @@ export default class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
     const { otp, expiresAt } = generateOtp();
 
-    sendVerificationEmail(name, email, otp);
-
     return await prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
         data: {
@@ -46,38 +44,24 @@ export default class UserService {
     })
   }
 
-  public async verifyUser(email: string, otp: string) {
-    const registeredUser = await this.isRegisteredUser(email)
-    if (!registeredUser) throw new HttpException(400, `user with email ${email} is not registered`);
+  // public async verifyUser(email: string, otp: string) {
+  //   const registeredUser = await this.isRegisteredUser(email)
+  //   if (!registeredUser) throw new HttpException(400, `user with email ${email} is not registered`);
 
-    if (registeredUser.isVerified) {
-      throw new HttpException(400, `user already verified`);
-    }
+  //   if (registeredUser.isVerified) {
+  //     throw new HttpException(400, `user already verified`);
+  //   }
 
-    const userOtpData = await this.otps.findUnique({ where: { userId: registeredUser.id } });
-    const now = moment();
+  //   const userOtpData = await this.otps.findUnique({ where: { userId: registeredUser.id } });
+  //   const now = moment();
 
-    if (userOtpData?.otp !== otp) {
-      throw new HttpException(400, 'invalid verification code')
-    } else if (now.isAfter(userOtpData.expiresAt)) {
-      throw new HttpException(400, 'verification code expired')
-    }
-    await this.users.update({ where: { id: registeredUser.id }, data: { isVerified: true } })
-  }
-
-  public async resendVerifyOtp(email: string) {
-    const registeredUser = await this.isRegisteredUser(email);
-    if (!registeredUser) throw new HttpException(400, `user with email ${email} is not registered`);
-    if (registeredUser.isVerified) {
-      throw new HttpException(400, `user already verified`);
-    }
-    const { otp, expiresAt } = generateOtp();
-
-    // create otp record
-    await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
-    // send otp
-    sendVerificationEmail(registeredUser.name, email, otp);
-  }
+  //   if (userOtpData?.otp !== otp) {
+  //     throw new HttpException(400, 'invalid verification code')
+  //   } else if (now.isAfter(userOtpData.expiresAt)) {
+  //     throw new HttpException(400, 'verification code expired')
+  //   }
+  //   await this.users.update({ where: { id: registeredUser.id }, data: { isVerified: true } })
+  // }
 
   public async login(email: string, password: string): Promise<User> {
     const existingUser = await this.isRegisteredUser(email)
@@ -94,6 +78,20 @@ export default class UserService {
     if (!registeredUser) throw new HttpException(409, `Email ${email} is not registered`)
 
     const { otp, expiresAt } = generateOtp();
+    // create otp record
+    await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
+    // send otp
+    sendVerificationEmail(registeredUser.name, email, otp);
+  }
+
+  public async resendResetOtp(email: string) {
+    const registeredUser = await this.isRegisteredUser(email);
+    if (!registeredUser) throw new HttpException(400, `user with email ${email} is not registered`);
+    // if (registeredUser.isVerified) {
+    //   throw new HttpException(400, `user already verified`);
+    // }
+    const { otp, expiresAt } = generateOtp();
+
     // create otp record
     await this.otps.create({ data: { userId: registeredUser.id, otp, expiresAt } });
     // send otp
