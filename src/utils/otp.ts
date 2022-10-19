@@ -1,7 +1,7 @@
 import otpGenerator from 'otp-generator';
 
 function generateOtp() {
-  const otp = otpGenerator.generate(5, {
+  const otp = otpGenerator.generate(4, {
     digits: true,
     upperCaseAlphabets: false,
     lowerCaseAlphabets: false,
