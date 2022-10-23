@@ -12,16 +12,17 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
+  id         String     @id @default(uuid())
   name       String
-  email      String   @unique
+  email      String     @unique
   password   String
   zipCode    String
-  isAdmin    Boolean  @default(false)
-  isVerified Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  isAdmin    Boolean    @default(false)
+  isVerified Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   otp        Otp?
+  foods      FoodItem[]
 
   @@map("users")
 }
@@ -37,9 +38,24 @@ model Otp {
 }
 
 model Storage {
-  id    String @id @default(uuid())
+  id    String     @id @default(uuid())
   title String
   logo  String
+  items FoodItem[]
 
   @@map("storages")
+}
+
+model FoodItem {
+  id          String  @id @default(uuid())
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  storage     Storage @relation(fields: [storageId], references: [id], onDelete: Cascade)
+  storageId   String
+  name        String
+  quantity    Int
+  createdDate String
+  expiryDate  String
+
+  @@map("foods")
 }
