@@ -35,3 +35,11 @@ model Otp {
 
   @@map("otps")
 }
+
+model Storage {
+  id    String @id @default(uuid())
+  title String
+  logo  String
+
+  @@map("storages")
+}
