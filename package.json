@@ -9,6 +9,9 @@
     "build": "tsc",
     "prestart": "npx prisma migrate deploy"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
