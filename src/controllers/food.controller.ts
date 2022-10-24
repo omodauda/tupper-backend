@@ -36,4 +36,19 @@ export default class FoodController {
       next(error)
     }
   }
+
+  public getUserFoods = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    const { id: userId } = req.user;
+    try {
+      const data = await this.FoodService.getAllFoods(userId);
+      return res
+        .status(201)
+        .json({
+          status: 'success',
+          data
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
