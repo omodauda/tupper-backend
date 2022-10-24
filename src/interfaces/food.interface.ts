@@ -5,3 +5,9 @@ export interface FoodItem {
   createdDate: string;
   expiryDate: string;
 }
+
+export interface Storage {
+  id: string;
+  title: string;
+  logo: string;
+}
