@@ -23,5 +23,9 @@ export default class FoodRoute implements Route {
       .route(`${this.path}`)
       .post(authMiddleware, validationMiddleware(addFoodValidation), this.FoodController.addFood)
       .get(authMiddleware, this.FoodController.getUserFoods)
+
+    this.router
+      .route(`${this.path}/storages/:id`)
+      .get(authMiddleware, this.FoodController.getStorageFoods)
   }
 }
