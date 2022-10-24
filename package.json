@@ -7,7 +7,7 @@
     "start": "node dist/index.js",
     "dev": "nodemon",
     "build": "tsc",
-    "prestart": "npx prisma migrate deploy"
+    "prestart": "npx prisma migrate deploy && npx prisma db seed"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
