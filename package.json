@@ -10,7 +10,7 @@
     "prestart": "npx prisma migrate deploy && npx prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "node dist/prisma/seed.js"
   },
   "keywords": [],
   "author": "",
