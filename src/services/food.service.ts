@@ -28,4 +28,10 @@ export default class FoodService {
       }
     })
   }
+
+  public async getAllFoods(userId: string) {
+    return await this.food.findMany({
+      where: { userId }
+    })
+  }
 }
