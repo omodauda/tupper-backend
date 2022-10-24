@@ -7,8 +7,16 @@ export default class FoodService {
   public storage = prisma.storage;
   public food = prisma.foodItem;
 
-  public async getStorages(): Promise<Storage[]> {
-    return await this.storage.findMany();
+  public async getStorages(userId: string): Promise<Storage[]> {
+    return await this.storage.findMany({
+      include: {
+        items: {
+          where: {
+            userId
+          },
+        }
+      }
+    });
   }
 
   public async addFood(userId: string, foodItemData: FoodItem) {
@@ -31,7 +39,7 @@ export default class FoodService {
 
   public async getAllFoods(userId: string) {
     return await this.food.findMany({
-      where: { userId }
+      where: { userId },
     })
   }
 }
