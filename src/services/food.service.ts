@@ -7,8 +7,8 @@ export default class FoodService {
   public storage = prisma.storage;
   public food = prisma.foodItem;
 
-  private async existingStorage(storageId: string) {
-    return await this.storage.findUnique({ where: { id: storageId } })
+  private async existingStorage(storageTitle: string) {
+    return await this.storage.findUnique({ where: { title: storageTitle } })
   }
 
   public async getStorages(userId: string): Promise<Storage[]> {
@@ -23,15 +23,15 @@ export default class FoodService {
     });
   }
 
-  public async getStorageFoods(userId: string, storageId: string) {
-    const existingStorage = await this.existingStorage(storageId)
+  public async getStorageFoods(userId: string, storageTitle: any) {
+    const existingStorage = await this.existingStorage(storageTitle)
     if (!existingStorage) {
       throw new HttpException(409, `invalid storage`);
     }
     return await this.food.findMany({
       where: {
         userId,
-        storageId,
+        storageId: existingStorage.id,
       }
     })
   }

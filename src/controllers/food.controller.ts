@@ -25,9 +25,9 @@ export default class FoodController {
 
   public getStorageFoods = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     const { id: userId } = req.user;
-    const { id: storageId } = req.params;
+    const { title } = req.params;
     try {
-      const foods = await this.FoodService.getStorageFoods(userId, storageId)
+      const foods = await this.FoodService.getStorageFoods(userId, title)
       return res
         .status(200)
         .json({
