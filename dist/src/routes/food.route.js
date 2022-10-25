@@ -18,11 +18,14 @@ class FoodRoute {
     initializeRoutes() {
         this.router
             .route(`${this.path}/storages`)
-            .get(this.FoodController.getStorages);
+            .get(auth_middleware_1.authMiddleware, this.FoodController.getStorages);
         this.router
             .route(`${this.path}`)
             .post(auth_middleware_1.authMiddleware, (0, validation_middleware_1.default)(food_validation_1.addFoodValidation), this.FoodController.addFood)
             .get(auth_middleware_1.authMiddleware, this.FoodController.getUserFoods);
+        this.router
+            .route(`${this.path}/storages/:title`)
+            .get(auth_middleware_1.authMiddleware, this.FoodController.getStorageFoods);
     }
 }
 exports.default = FoodRoute;
