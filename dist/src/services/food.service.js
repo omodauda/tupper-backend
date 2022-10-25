@@ -47,7 +47,12 @@ class FoodService {
                 where: {
                     userId,
                     storageId: existingStorage.id,
-                }
+                },
+                orderBy: [
+                    {
+                        createdAt: 'desc'
+                    }
+                ]
             });
         });
     }
@@ -74,6 +79,11 @@ class FoodService {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.food.findMany({
                 where: { userId },
+                orderBy: [
+                    {
+                        createdAt: 'desc'
+                    }
+                ]
             });
         });
     }

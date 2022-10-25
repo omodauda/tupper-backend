@@ -47,15 +47,17 @@ model Storage {
 }
 
 model FoodItem {
-  id          String  @id @default(uuid())
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
-  storage     Storage @relation(fields: [storageId], references: [id], onDelete: Cascade)
+  storage     Storage  @relation(fields: [storageId], references: [id], onDelete: Cascade)
   storageId   String
   name        String
   quantity    Int
   createdDate String
   expiryDate  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   @@map("foods")
 }
