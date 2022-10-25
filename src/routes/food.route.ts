@@ -17,11 +17,15 @@ export default class FoodRoute implements Route {
   private initializeRoutes() {
     this.router
       .route(`${this.path}/storages`)
-      .get(this.FoodController.getStorages);
+      .get(authMiddleware, this.FoodController.getStorages);
 
     this.router
       .route(`${this.path}`)
       .post(authMiddleware, validationMiddleware(addFoodValidation), this.FoodController.addFood)
       .get(authMiddleware, this.FoodController.getUserFoods)
+
+    this.router
+      .route(`${this.path}/storages/:title`)
+      .get(authMiddleware, this.FoodController.getStorageFoods)
   }
 }
