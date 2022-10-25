@@ -19,9 +19,36 @@ class FoodService {
         this.storage = prisma_1.default.storage;
         this.food = prisma_1.default.foodItem;
     }
-    getStorages() {
+    existingStorage(storageTitle) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.storage.findMany();
+            return yield this.storage.findUnique({ where: { title: storageTitle } });
+        });
+    }
+    getStorages(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.storage.findMany({
+                include: {
+                    items: {
+                        where: {
+                            userId
+                        },
+                    }
+                }
+            });
+        });
+    }
+    getStorageFoods(userId, storageTitle) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existingStorage = yield this.existingStorage(storageTitle);
+            if (!existingStorage) {
+                throw new error_handler_1.default(409, `invalid storage`);
+            }
+            return yield this.food.findMany({
+                where: {
+                    userId,
+                    storageId: existingStorage.id,
+                }
+            });
         });
     }
     addFood(userId, foodItemData) {
@@ -46,7 +73,7 @@ class FoodService {
     getAllFoods(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.food.findMany({
-                where: { userId }
+                where: { userId },
             });
         });
     }
