@@ -32,7 +32,12 @@ export default class FoodService {
       where: {
         userId,
         storageId: existingStorage.id,
-      }
+      },
+      orderBy: [
+        {
+          createdAt: 'desc'
+        }
+      ]
     })
   }
 
@@ -57,6 +62,11 @@ export default class FoodService {
   public async getAllFoods(userId: string) {
     return await this.food.findMany({
       where: { userId },
+      orderBy: [
+        {
+          createdAt: 'desc'
+        }
+      ]
     })
   }
 }
