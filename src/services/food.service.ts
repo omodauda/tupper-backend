@@ -23,7 +23,7 @@ export default class FoodService {
     });
   }
 
-  public async getStorageFoods(userId: string, storageTitle: any) {
+  public async getStorageFoods(userId: string, storageTitle: any, orderData: any) {
     const existingStorage = await this.existingStorage(storageTitle)
     if (!existingStorage) {
       throw new HttpException(409, `invalid storage`);
@@ -33,11 +33,7 @@ export default class FoodService {
         userId,
         storageId: existingStorage.id,
       },
-      orderBy: [
-        {
-          createdAt: 'desc'
-        }
-      ]
+      orderBy: orderData
     })
   }
 
@@ -59,14 +55,10 @@ export default class FoodService {
     })
   }
 
-  public async getAllFoods(userId: string) {
+  public async getAllFoods(userId: string, orderData: any) {
     return await this.food.findMany({
       where: { userId },
-      orderBy: [
-        {
-          createdAt: 'desc'
-        }
-      ]
+      orderBy: orderData
     })
   }
 }
