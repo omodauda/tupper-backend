@@ -26,6 +26,9 @@ class FoodRoute {
         this.router
             .route(`${this.path}/storages/:title`)
             .get(auth_middleware_1.authMiddleware, this.FoodController.getStorageFoods);
+        this.router
+            .route(`${this.path}/:id`)
+            .patch(auth_middleware_1.authMiddleware, (0, validation_middleware_1.default)(food_validation_1.updateFoodValidation), this.FoodController.updateFood);
     }
 }
 exports.default = FoodRoute;
