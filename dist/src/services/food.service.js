@@ -37,7 +37,7 @@ class FoodService {
             });
         });
     }
-    getStorageFoods(userId, storageTitle) {
+    getStorageFoods(userId, storageTitle, orderData) {
         return __awaiter(this, void 0, void 0, function* () {
             const existingStorage = yield this.existingStorage(storageTitle);
             if (!existingStorage) {
@@ -48,11 +48,7 @@ class FoodService {
                     userId,
                     storageId: existingStorage.id,
                 },
-                orderBy: [
-                    {
-                        createdAt: 'desc'
-                    }
-                ]
+                orderBy: orderData
             });
         });
     }
@@ -75,15 +71,11 @@ class FoodService {
             });
         });
     }
-    getAllFoods(userId) {
+    getAllFoods(userId, orderData) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.food.findMany({
                 where: { userId },
-                orderBy: [
-                    {
-                        createdAt: 'desc'
-                    }
-                ]
+                orderBy: orderData
             });
         });
     }
