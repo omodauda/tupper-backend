@@ -40,3 +40,30 @@ export const addFoodValidation = Joi.object({
       'any.required': 'expiry date is required'
     })
 })
+
+export const updateFoodValidation = Joi.object({
+  storageId: Joi.string()
+    .min(36)
+    .max(36)
+    .messages({
+      'string.empty': 'storage id cannot be an empty field',
+      'string.min': 'storage id should be minimum of 36 characters length',
+      'string.max': 'storage id should not be more than 36 characters length',
+    }),
+  name: Joi.string()
+    .messages({
+      'string.empty': 'name cannot be an empty field',
+    }),
+  quantity: Joi.number()
+    .integer()
+    .positive()
+    .messages({
+      'number.base': "quantity must be a number",
+      'number.positive': 'quantity should be a positive number',
+      'number.integer': 'quantity should be an integer'
+    }),
+  expiryDate: Joi.date()
+    .messages({
+      'date.base': 'expiry date must be a valid date',
+    })
+})
