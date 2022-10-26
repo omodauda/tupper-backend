@@ -3,6 +3,7 @@ import FoodService from "../services/food.service";
 import { AuthRequest } from "interfaces/auth.interface";
 import { FoodItem } from "interfaces/food.interface";
 import { publicResponse } from "../helpers/food.helper";
+import HttpException from "../utils/handlers/error.handler";
 
 export default class FoodController {
   private FoodService = new FoodService();
@@ -26,8 +27,28 @@ export default class FoodController {
   public getStorageFoods = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     const { id: userId } = req.user;
     const { title } = req.params;
+    let orderData;
+    if (req.query.sort === undefined) {
+      orderData = [{
+        createdAt: 'desc'
+      }]
+    }
+    if (req.query.sort === 'alphabetically') {
+      orderData = [
+        {
+          name: 'asc'
+        }
+      ]
+    }
+    if (req.query.sort === 'expiry_date') {
+      orderData = [
+        {
+          expiryDate: 'asc'
+        }
+      ]
+    }
     try {
-      const foods = await this.FoodService.getStorageFoods(userId, title)
+      const foods = await this.FoodService.getStorageFoods(userId, title, orderData)
       return res
         .status(200)
         .json({
@@ -58,8 +79,34 @@ export default class FoodController {
 
   public getUserFoods = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     const { id: userId } = req.user;
+    // const acceptedQueryParams: string[] = ['alphabetically', 'expiry_date'];
+
+    // if (req.query.sort && !acceptedQueryParams.includes(query.sort)) {
+    //   throw new HttpException(409, 'Invalid query param')
+    // }
+
+    let orderData;
+    if (req.query.sort === undefined) {
+      orderData = [{
+        createdAt: 'desc'
+      }]
+    }
+    if (req.query.sort === 'alphabetically') {
+      orderData = [
+        {
+          name: 'asc'
+        }
+      ]
+    }
+    if (req.query.sort === 'expiry_date') {
+      orderData = [
+        {
+          expiryDate: 'asc'
+        }
+      ]
+    }
     try {
-      const data = await this.FoodService.getAllFoods(userId);
+      const data = await this.FoodService.getAllFoods(userId, orderData);
       return res
         .status(200)
         .json({
