@@ -2,7 +2,7 @@ import { Router } from "express";
 import FoodController from "../controllers/food.controller";
 import Route from "../interfaces/route.interface";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { addFoodValidation } from "../validations/food.validation";
+import { addFoodValidation, updateFoodValidation } from "../validations/food.validation";
 import validationMiddleware from "../middlewares/validation.middleware";
 
 export default class FoodRoute implements Route {
@@ -27,5 +27,9 @@ export default class FoodRoute implements Route {
     this.router
       .route(`${this.path}/storages/:title`)
       .get(authMiddleware, this.FoodController.getStorageFoods)
+
+    this.router
+      .route(`${this.path}/:id`)
+      .patch(authMiddleware, validationMiddleware(updateFoodValidation), this.FoodController.updateFood)
   }
 }
