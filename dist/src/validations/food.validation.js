@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addFoodValidation = void 0;
+exports.updateFoodValidation = exports.addFoodValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.addFoodValidation = joi_1.default.object({
     storageId: joi_1.default.string()
@@ -43,5 +43,31 @@ exports.addFoodValidation = joi_1.default.object({
         .messages({
         'date.base': 'expiry date must be a valid date',
         'any.required': 'expiry date is required'
+    })
+});
+exports.updateFoodValidation = joi_1.default.object({
+    storageId: joi_1.default.string()
+        .min(36)
+        .max(36)
+        .messages({
+        'string.empty': 'storage id cannot be an empty field',
+        'string.min': 'storage id should be minimum of 36 characters length',
+        'string.max': 'storage id should not be more than 36 characters length',
+    }),
+    name: joi_1.default.string()
+        .messages({
+        'string.empty': 'name cannot be an empty field',
+    }),
+    quantity: joi_1.default.number()
+        .integer()
+        .positive()
+        .messages({
+        'number.base': "quantity must be a number",
+        'number.positive': 'quantity should be a positive number',
+        'number.integer': 'quantity should be an integer'
+    }),
+    expiryDate: joi_1.default.date()
+        .messages({
+        'date.base': 'expiry date must be a valid date',
     })
 });
