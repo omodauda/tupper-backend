@@ -117,4 +117,20 @@ export default class FoodController {
       next(error)
     }
   }
+
+  public updateFood = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    const { id: userId } = req.user;
+    const { id: foodId } = req.params;
+    try {
+      await this.FoodService.updateFood(userId, foodId, req.body);
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'update successful'
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
