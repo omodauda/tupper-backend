@@ -36,8 +36,28 @@ class FoodController {
         this.getStorageFoods = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { id: userId } = req.user;
             const { title } = req.params;
+            let orderData;
+            if (req.query.sort === undefined) {
+                orderData = [{
+                        createdAt: 'desc'
+                    }];
+            }
+            if (req.query.sort === 'alphabetically') {
+                orderData = [
+                    {
+                        name: 'asc'
+                    }
+                ];
+            }
+            if (req.query.sort === 'expiry_date') {
+                orderData = [
+                    {
+                        expiryDate: 'asc'
+                    }
+                ];
+            }
             try {
-                const foods = yield this.FoodService.getStorageFoods(userId, title);
+                const foods = yield this.FoodService.getStorageFoods(userId, title, orderData);
                 return res
                     .status(200)
                     .json({
@@ -68,8 +88,32 @@ class FoodController {
         });
         this.getUserFoods = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { id: userId } = req.user;
+            // const acceptedQueryParams: string[] = ['alphabetically', 'expiry_date'];
+            // if (req.query.sort && !acceptedQueryParams.includes(query.sort)) {
+            //   throw new HttpException(409, 'Invalid query param')
+            // }
+            let orderData;
+            if (req.query.sort === undefined) {
+                orderData = [{
+                        createdAt: 'desc'
+                    }];
+            }
+            if (req.query.sort === 'alphabetically') {
+                orderData = [
+                    {
+                        name: 'asc'
+                    }
+                ];
+            }
+            if (req.query.sort === 'expiry_date') {
+                orderData = [
+                    {
+                        expiryDate: 'asc'
+                    }
+                ];
+            }
             try {
-                const data = yield this.FoodService.getAllFoods(userId);
+                const data = yield this.FoodService.getAllFoods(userId, orderData);
                 return res
                     .status(200)
                     .json({
