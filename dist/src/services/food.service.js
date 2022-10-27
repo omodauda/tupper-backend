@@ -93,5 +93,19 @@ class FoodService {
             return yield this.food.update({ where: { id: foodId }, data: update });
         });
     }
+    deleteFood(userId, foodId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // check if food exist
+            const existingFood = yield this.food.findUnique({ where: { id: foodId } });
+            if (!existingFood) {
+                throw new error_handler_1.default(409, 'Food item does not exist');
+            }
+            // check if food belongs to user
+            if (existingFood.userId !== userId) {
+                throw new error_handler_1.default(409, 'Unauthorized');
+            }
+            return yield this.food.delete({ where: { id: foodId } });
+        });
+    }
 }
 exports.default = FoodService;
