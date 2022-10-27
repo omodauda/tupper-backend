@@ -133,4 +133,20 @@ export default class FoodController {
       next(error)
     }
   }
+
+  public deleteFood = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    const { id: userId } = req.user;
+    const { id: foodId } = req.params;
+    try {
+      await this.FoodService.deleteFood(userId, foodId);
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'delete successful'
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
