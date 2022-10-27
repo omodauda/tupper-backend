@@ -75,4 +75,17 @@ export default class FoodService {
 
     return await this.food.update({ where: { id: foodId }, data: update })
   }
+
+  public async deleteFood(userId: string, foodId: string) {
+    // check if food exist
+    const existingFood = await this.food.findUnique({ where: { id: foodId } });
+    if (!existingFood) {
+      throw new HttpException(409, 'Food item does not exist')
+    }
+    // check if food belongs to user
+    if (existingFood.userId !== userId) {
+      throw new HttpException(409, 'Unauthorized')
+    }
+    return await this.food.delete({ where: { id: foodId } })
+  }
 }

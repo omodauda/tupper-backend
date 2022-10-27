@@ -141,6 +141,22 @@ class FoodController {
                 next(error);
             }
         });
+        this.deleteFood = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const { id: userId } = req.user;
+            const { id: foodId } = req.params;
+            try {
+                yield this.FoodService.deleteFood(userId, foodId);
+                return res
+                    .status(200)
+                    .json({
+                    status: 'success',
+                    message: 'delete successful'
+                });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
     }
 }
 exports.default = FoodController;

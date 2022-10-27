@@ -31,5 +31,6 @@ export default class FoodRoute implements Route {
     this.router
       .route(`${this.path}/:id`)
       .patch(authMiddleware, validationMiddleware(updateFoodValidation), this.FoodController.updateFood)
+      .delete(authMiddleware, this.FoodController.deleteFood);
   }
 }
