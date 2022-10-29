@@ -4,9 +4,50 @@ import { AuthRequest } from "interfaces/auth.interface";
 import { FoodItem } from "interfaces/food.interface";
 import { publicResponse } from "../helpers/food.helper";
 import HttpException from "../utils/handlers/error.handler";
+import moment from "moment";
 
 export default class FoodController {
   private FoodService = new FoodService();
+
+  private sortFoodData = async (data: FoodItem[]) => {
+    let expired = <any>[];
+    let soon = <any>[];
+    let week = <any>[];
+    let later = <any>[];
+    const today = moment();
+    data.map((food: FoodItem) => {
+      const { expiryDate } = food;
+      const value = moment(expiryDate).diff(today, 'days');
+      if (value <= 0) {
+        expired.push(food)
+      } else if (value < 7) {
+        soon.push(food);
+      } else if (value === 7) {
+        week.push(food);
+      } else {
+        later.push(food);
+      }
+    })
+    const result = [
+      {
+        title: 'Expired',
+        data: expired,
+      },
+      {
+        title: 'Expires soon',
+        data: soon,
+      },
+      {
+        title: 'Expires in a week',
+        data: week,
+      },
+      {
+        title: 'Expires later',
+        data: later,
+      },
+    ];
+    return result;
+  }
 
   public getStorages = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     const { id: userId } = req.user;
@@ -48,12 +89,13 @@ export default class FoodController {
       ]
     }
     try {
-      const foods = await this.FoodService.getStorageFoods(userId, title, orderData)
+      const foods = await this.FoodService.getStorageFoods(userId, title, orderData);
+      const sortedData = await this.sortFoodData(foods)
       return res
         .status(200)
         .json({
           status: 'success',
-          data: foods
+          data: sortedData
         })
     } catch (error) {
       next(error)
@@ -107,11 +149,13 @@ export default class FoodController {
     }
     try {
       const data = await this.FoodService.getAllFoods(userId, orderData);
+      // sort food based on expiryDate into expiresSoon, in a week, later
+      const sortedData = await this.sortFoodData(data)
       return res
         .status(200)
         .json({
           status: 'success',
-          data
+          data: sortedData
         })
     } catch (error) {
       next(error)
