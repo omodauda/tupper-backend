@@ -14,9 +14,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const food_service_1 = __importDefault(require("../services/food.service"));
 const food_helper_1 = require("../helpers/food.helper");
+const moment_1 = __importDefault(require("moment"));
 class FoodController {
     constructor() {
         this.FoodService = new food_service_1.default();
+        this.sortFoodData = (data) => __awaiter(this, void 0, void 0, function* () {
+            let expired = [];
+            let soon = [];
+            let week = [];
+            let later = [];
+            const today = (0, moment_1.default)();
+            data.map((food) => {
+                const { expiryDate } = food;
+                const value = (0, moment_1.default)(expiryDate).diff(today, 'days');
+                if (value <= 0) {
+                    expired.push(food);
+                }
+                else if (value < 7) {
+                    soon.push(food);
+                }
+                else if (value === 7) {
+                    week.push(food);
+                }
+                else {
+                    later.push(food);
+                }
+            });
+            const result = [
+                {
+                    title: 'Expired',
+                    data: expired,
+                },
+                {
+                    title: 'Expires soon',
+                    data: soon,
+                },
+                {
+                    title: 'Expires in a week',
+                    data: week,
+                },
+                {
+                    title: 'Expires later',
+                    data: later,
+                },
+            ];
+            return result;
+        });
         this.getStorages = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { id: userId } = req.user;
             try {
@@ -58,11 +101,12 @@ class FoodController {
             }
             try {
                 const foods = yield this.FoodService.getStorageFoods(userId, title, orderData);
+                const sortedData = yield this.sortFoodData(foods);
                 return res
                     .status(200)
                     .json({
                     status: 'success',
-                    data: foods
+                    data: sortedData
                 });
             }
             catch (error) {
@@ -114,11 +158,13 @@ class FoodController {
             }
             try {
                 const data = yield this.FoodService.getAllFoods(userId, orderData);
+                // sort food based on expiryDate into expiresSoon, in a week, later
+                const sortedData = yield this.sortFoodData(data);
                 return res
                     .status(200)
                     .json({
                     status: 'success',
-                    data
+                    data: sortedData
                 });
             }
             catch (error) {

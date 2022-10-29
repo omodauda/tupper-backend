@@ -17,7 +17,7 @@ const signUpValidation = joi_1.default.object({
         'any.required': 'email is required'
     }),
     password: joi_1.default.string()
-        .min(5)
+        .min(8)
         .max(20)
         .required()
         .messages({
@@ -28,10 +28,8 @@ const signUpValidation = joi_1.default.object({
     }),
     name: joi_1.default.string()
         .required()
-        .pattern(/(\w.+\s).+/)
         .messages({
         'string.empty': 'name cannot be an empty field',
-        'string.pattern.base': 'full name is required',
         'any.required': 'name is required'
     }),
     zipCode: joi_1.default.string()
