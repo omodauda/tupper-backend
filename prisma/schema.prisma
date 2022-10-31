@@ -12,17 +12,18 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(uuid())
-  name       String
-  email      String     @unique
-  password   String
-  zipCode    String
-  isAdmin    Boolean    @default(false)
-  isVerified Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  otp        Otp?
-  foods      FoodItem[]
+  id                String     @id @default(uuid())
+  name              String
+  email             String     @unique
+  password          String
+  zipCode           String
+  isAdmin           Boolean    @default(false)
+  isVerified        Boolean    @default(false)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  otp               Otp?
+  foods             FoodItem[]
+  notificationToken String?
 
   @@map("users")
 }
