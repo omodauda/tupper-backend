@@ -117,4 +117,15 @@ export default class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
     await this.users.update({ where: { id: registeredUser.id }, data: { password: hashedPassword } })
   }
+
+  public async saveNotificationToken(userId: string, token: string) {
+    await this.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        notificationToken: token
+      }
+    })
+  }
 }
