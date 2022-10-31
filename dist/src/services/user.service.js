@@ -131,5 +131,17 @@ class UserService {
             yield this.users.update({ where: { id: registeredUser.id }, data: { password: hashedPassword } });
         });
     }
+    saveNotificationToken(userId, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.users.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    notificationToken: token
+                }
+            });
+        });
+    }
 }
 exports.default = UserService;

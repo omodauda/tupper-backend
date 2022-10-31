@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const helmet_1 = __importDefault(require("helmet"));
 const hpp_1 = __importDefault(require("hpp"));
+const firebase_admin_1 = __importDefault(require("firebase-admin"));
 const error_middleware_1 = __importDefault(require("./middlewares/error.middleware"));
 const schedules_1 = __importDefault(require("./schedules"));
 class App {
@@ -15,10 +16,15 @@ class App {
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || 4000;
         this.env = process.env.NODE_ENV || 'development';
+        this.googleKey = process.env['GOOGLE_APP_CREDENTIALS'] || '';
+        this.serviceAccount = JSON.parse(this.googleKey);
         this.initializeMiddleware();
         this.initializeRoutes(routes);
         this.initializeErrorHandling();
         this.initializeSchedules();
+        firebase_admin_1.default.initializeApp({
+            credential: firebase_admin_1.default.credential.cert(this.serviceAccount)
+        });
     }
     initializeMiddleware() {
         this.app.use((0, cors_1.default)());

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetPasswordValidation = exports.resendVerifyOtp = exports.verifyUserValidation = exports.loginValidation = exports.signUpValidation = void 0;
+exports.saveNotificationTokenValidation = exports.resetPasswordValidation = exports.resendVerifyOtp = exports.verifyUserValidation = exports.loginValidation = exports.signUpValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 const signUpValidation = joi_1.default.object({
     email: joi_1.default.string()
@@ -132,3 +132,12 @@ const resetPasswordValidation = joi_1.default.object({
     }),
 });
 exports.resetPasswordValidation = resetPasswordValidation;
+const saveNotificationTokenValidation = joi_1.default.object({
+    token: joi_1.default.string()
+        .required()
+        .messages({
+        'string.empty': 'token cannot be empty',
+        'any.required': 'token is required',
+    })
+});
+exports.saveNotificationTokenValidation = saveNotificationTokenValidation;

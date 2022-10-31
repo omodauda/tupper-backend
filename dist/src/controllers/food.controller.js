@@ -101,12 +101,12 @@ class FoodController {
             }
             try {
                 const foods = yield this.FoodService.getStorageFoods(userId, title, orderData);
-                const sortedData = yield this.sortFoodData(foods);
+                // const sortedData = await this.sortFoodData(foods)
                 return res
                     .status(200)
                     .json({
                     status: 'success',
-                    data: sortedData
+                    data: foods
                 });
             }
             catch (error) {
@@ -159,12 +159,12 @@ class FoodController {
             try {
                 const data = yield this.FoodService.getAllFoods(userId, orderData);
                 // sort food based on expiryDate into expiresSoon, in a week, later
-                const sortedData = yield this.sortFoodData(data);
+                // const sortedData = await this.sortFoodData(data)
                 return res
                     .status(200)
                     .json({
                     status: 'success',
-                    data: sortedData
+                    data: data
                 });
             }
             catch (error) {

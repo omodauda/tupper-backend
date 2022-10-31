@@ -109,6 +109,22 @@ class UserController {
                 next(error);
             }
         });
+        this.saveNotificationToken = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const { id: userId } = req.user;
+            const { token } = req.body;
+            try {
+                yield this.UserService.saveNotificationToken(userId, token);
+                return res
+                    .status(200)
+                    .json({
+                    status: 'success',
+                    message: 'notification token updated'
+                });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
     }
 }
 exports.default = UserController;
