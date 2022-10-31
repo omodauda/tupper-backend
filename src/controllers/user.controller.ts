@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
+import { AuthRequest } from "../interfaces/auth.interface";
 import UserService from "../services/user.service";
 import { signToken } from '../utils/token'
 
@@ -93,6 +94,22 @@ export default class UserController {
         .json({
           status: 'success',
           message: 'password reset successful',
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public saveNotificationToken = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    const { id: userId } = req.user;
+    const { token } = req.body;
+    try {
+      await this.UserService.saveNotificationToken(userId, token)
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'notification token updated'
         })
     } catch (error) {
       next(error)
