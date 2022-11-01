@@ -115,4 +115,19 @@ export default class UserController {
       next(error)
     }
   }
+
+  public removeNotificationToken = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    const { id: userId } = req.user;
+    try {
+      await this.UserService.removeNotificationToken(userId)
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'notification token removed'
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
 }

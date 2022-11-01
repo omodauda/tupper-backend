@@ -128,4 +128,15 @@ export default class UserService {
       }
     })
   }
+
+  public async removeNotificationToken(userId: string) {
+    await this.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        notificationToken: null
+      }
+    })
+  }
 }
