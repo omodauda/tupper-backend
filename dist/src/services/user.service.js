@@ -38,24 +38,34 @@ class UserService {
             if (existingEmail)
                 throw new error_handler_1.default(409, `user with email ${email} already exist`);
             const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-            const { otp, expiresAt } = (0, otp_1.default)();
-            return yield prisma_1.default.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
-                const newUser = yield tx.user.create({
-                    data: {
-                        name,
-                        email,
-                        password: hashedPassword,
-                        zipCode
-                    }
-                });
-                yield tx.otp.create({
-                    data: {
-                        userId: newUser.id,
-                        otp,
-                        expiresAt
-                    }
-                });
-            }));
+            // const { otp, expiresAt } = generateOtp();
+            const newUser = yield this.users.create({
+                data: {
+                    name,
+                    email,
+                    password: hashedPassword,
+                    zipCode
+                }
+            });
+            return newUser;
+            // return await prisma.$transaction(async (tx) => {
+            //   const newUser = await tx.user.create({
+            //     data: {
+            //       name,
+            //       email,
+            //       password: hashedPassword,
+            //       zipCode
+            //     }
+            //   })
+            //   await tx.otp.create({
+            //     data: {
+            //       userId: newUser.id,
+            //       otp,
+            //       expiresAt
+            //     }
+            //   })
+            //   return newUser;
+            // })
         });
     }
     // public async verifyUser(email: string, otp: string) {
@@ -139,6 +149,18 @@ class UserService {
                 },
                 data: {
                     notificationToken: token
+                }
+            });
+        });
+    }
+    removeNotificationToken(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.users.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    notificationToken: null
                 }
             });
         });

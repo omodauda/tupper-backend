@@ -37,6 +37,9 @@ class UserRoute {
         this.router
             .route(`${this.path}/save-token`)
             .post((0, validation_middleware_1.default)(user_validation_1.saveNotificationTokenValidation), auth_middleware_1.authMiddleware, this.UserController.saveNotificationToken);
+        this.router
+            .route(`${this.path}/remove-token`)
+            .patch(auth_middleware_1.authMiddleware, this.UserController.removeNotificationToken);
     }
 }
 exports.default = UserRoute;

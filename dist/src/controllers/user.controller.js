@@ -20,12 +20,15 @@ class UserController {
         this.signUp = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { name, email, password, zipCode } = req.body;
-                yield this.UserService.createUser(name, email, password, zipCode);
+                const user = yield this.UserService.createUser(name, email, password, zipCode);
+                const { token } = (0, token_1.signToken)(user);
                 return res
                     .status(201)
                     .json({
                     status: 'success',
-                    message: 'user successfully registered'
+                    message: 'user successfully registered',
+                    token,
+                    data: user
                 });
             }
             catch (error) {
@@ -119,6 +122,21 @@ class UserController {
                     .json({
                     status: 'success',
                     message: 'notification token updated'
+                });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.removeNotificationToken = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const { id: userId } = req.user;
+            try {
+                yield this.UserService.removeNotificationToken(userId);
+                return res
+                    .status(200)
+                    .json({
+                    status: 'success',
+                    message: 'notification token removed'
                 });
             }
             catch (error) {
