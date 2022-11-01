@@ -21,7 +21,7 @@ class App {
     this.initializeMiddleware();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
-    this.initializeSchedules()
+    this.initializeSchedules();
   }
 
   private initializeMiddleware(): void {

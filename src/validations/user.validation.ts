@@ -127,4 +127,20 @@ const resetPasswordValidation = Joi.object({
     }),
 })
 
-export { signUpValidation, loginValidation, verifyUserValidation, resendVerifyOtp, resetPasswordValidation }
+const saveNotificationTokenValidation = Joi.object({
+  token: Joi.string()
+    .required()
+    .messages({
+      'string.empty': 'token cannot be empty',
+      'any.required': 'token is required',
+    })
+})
+
+export {
+  signUpValidation,
+  loginValidation,
+  verifyUserValidation,
+  resendVerifyOtp,
+  resetPasswordValidation,
+  saveNotificationTokenValidation
+}

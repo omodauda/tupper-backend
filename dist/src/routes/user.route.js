@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
 const user_controller_1 = __importDefault(require("../controllers/user.controller"));
 const validation_middleware_1 = __importDefault(require("../middlewares/validation.middleware"));
 const user_validation_1 = require("../validations/user.validation");
@@ -33,6 +34,9 @@ class UserRoute {
         this.router
             .route(`${this.path}/reset-password`)
             .post((0, validation_middleware_1.default)(user_validation_1.resetPasswordValidation), this.UserController.resetPassword);
+        this.router
+            .route(`${this.path}/save-token`)
+            .post((0, validation_middleware_1.default)(user_validation_1.saveNotificationTokenValidation), auth_middleware_1.authMiddleware, this.UserController.saveNotificationToken);
     }
 }
 exports.default = UserRoute;
