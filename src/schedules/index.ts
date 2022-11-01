@@ -6,7 +6,7 @@ export default (): void => {
   cron.schedule('*/2 * * * *', () => {
     deleteStaleOtpData();
   });
-  cron.schedule('0 8 * * *', () => {
+  cron.schedule('0 10 * * *', () => {
     notifyUser();
   })
 }
