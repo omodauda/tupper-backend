@@ -10,12 +10,15 @@ export default class UserController {
   public signUp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { name, email, password, zipCode } = req.body;
-      await this.UserService.createUser(name, email, password, zipCode);
+      const user: User = await this.UserService.createUser(name, email, password, zipCode);
+      const { token } = signToken(user);
       return res
         .status(201)
         .json({
           status: 'success',
-          message: 'user successfully registered'
+          message: 'user successfully registered',
+          token,
+          data: user
         })
     } catch (error) {
       next(error);
@@ -110,6 +113,21 @@ export default class UserController {
         .json({
           status: 'success',
           message: 'notification token updated'
+        })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public removeNotificationToken = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    const { id: userId } = req.user;
+    try {
+      await this.UserService.removeNotificationToken(userId)
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          message: 'notification token removed'
         })
     } catch (error) {
       next(error)

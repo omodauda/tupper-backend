@@ -54,5 +54,9 @@ export default class UserRoute implements Route {
         authMiddleware,
         this.UserController.saveNotificationToken
       );
+
+    this.router
+      .route(`${this.path}/remove-token`)
+      .patch(authMiddleware, this.UserController.removeNotificationToken)
   }
 }

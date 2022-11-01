@@ -23,25 +23,37 @@ export default class UserService {
     if (existingEmail) throw new HttpException(409, `user with email ${email} already exist`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const { otp, expiresAt } = generateOtp();
+    // const { otp, expiresAt } = generateOtp();
 
-    return await prisma.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword,
-          zipCode
-        }
-      })
-      await tx.otp.create({
-        data: {
-          userId: newUser.id,
-          otp,
-          expiresAt
-        }
-      })
-    })
+    const newUser = await this.users.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        zipCode
+      }
+    });
+
+    return newUser;
+
+    // return await prisma.$transaction(async (tx) => {
+    //   const newUser = await tx.user.create({
+    //     data: {
+    //       name,
+    //       email,
+    //       password: hashedPassword,
+    //       zipCode
+    //     }
+    //   })
+    //   await tx.otp.create({
+    //     data: {
+    //       userId: newUser.id,
+    //       otp,
+    //       expiresAt
+    //     }
+    //   })
+    //   return newUser;
+    // })
   }
 
   // public async verifyUser(email: string, otp: string) {
@@ -125,6 +137,17 @@ export default class UserService {
       },
       data: {
         notificationToken: token
+      }
+    })
+  }
+
+  public async removeNotificationToken(userId: string) {
+    await this.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        notificationToken: null
       }
     })
   }
