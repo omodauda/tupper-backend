@@ -3,8 +3,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import hpp from 'hpp';
-import admin from 'firebase-admin';
-import { GoogleAuth } from 'google-auth-library';
 
 import errorMiddleware from './middlewares/error.middleware';
 import Routes from './interfaces/route.interface';
@@ -14,25 +12,16 @@ class App {
   public app: Application;
   public port: number | string;
   public env: string;
-  private googleKey: string;
-  private serviceAccount: {};
 
   constructor(routes: Routes[]) {
     this.app = express();
     this.port = process.env.PORT || 4000;
     this.env = process.env.NODE_ENV || 'development';
-    this.googleKey = process.env['GOOGLE_APP_CREDENTIALS'] || '';
-    this.serviceAccount = JSON.parse(this.googleKey)
 
     this.initializeMiddleware();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
     this.initializeSchedules();
-
-    admin.initializeApp({
-      credential: admin.credential.cert(this.serviceAccount)
-    })
-
   }
 
   private initializeMiddleware(): void {
