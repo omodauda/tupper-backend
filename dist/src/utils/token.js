@@ -9,7 +9,7 @@ const signToken = (user) => {
     const payload = { id: user.id };
     const secretKey = process.env.JWT_SECRET;
     const expiresIn = 60 * 60 * 240;
-    const token = jsonwebtoken_1.default.sign(payload, secretKey, { expiresIn });
+    const token = jsonwebtoken_1.default.sign(payload, secretKey, {});
     return { token, expiresIn };
 };
 exports.signToken = signToken;
