@@ -7,6 +7,6 @@ export const signToken = (user: User): TokenData => {
   const secretKey = process.env.JWT_SECRET;
   const expiresIn: number = 60 * 60 * 240;
 
-  const token = jwt.sign(payload, secretKey as jwt.Secret, { expiresIn })
+  const token = jwt.sign(payload, secretKey as jwt.Secret, {})
   return { token, expiresIn }
 }
