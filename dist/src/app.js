@@ -8,7 +8,8 @@ const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const helmet_1 = __importDefault(require("helmet"));
 const hpp_1 = __importDefault(require("hpp"));
-const error_middleware_1 = __importDefault(require("middlewares/error.middleware"));
+const error_middleware_1 = __importDefault(require("./middlewares/error.middleware"));
+const schedules_1 = __importDefault(require("./schedules"));
 class App {
     constructor(routes) {
         this.app = (0, express_1.default)();
@@ -17,6 +18,7 @@ class App {
         this.initializeMiddleware();
         this.initializeRoutes(routes);
         this.initializeErrorHandling();
+        this.initializeSchedules();
     }
     initializeMiddleware() {
         this.app.use((0, cors_1.default)());
@@ -33,6 +35,9 @@ class App {
     }
     initializeErrorHandling() {
         this.app.use(error_middleware_1.default);
+    }
+    initializeSchedules() {
+        (0, schedules_1.default)();
     }
     listen() {
         this.app.listen(this.port, () => {
